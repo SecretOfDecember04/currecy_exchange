@@ -1,88 +1,70 @@
 import React, { useState } from 'react';
 import { useCurrencyController } from '../controller/useCurrencyController';
-import LoadingIndicator from './LoadingIndicator';
-import ErrorMessage from './ErrorMessage';
+import CurrencyCard from './CurrencyCard';
 import './ExchangeRateView.css';
+import { Link } from 'react-router-dom';
 
 const ExchangeRateView: React.FC = () => {
-    const { baseCurrency, exchangeRates, loading, error } = useCurrencyController();
-
-    const [amount, setAmount] = useState<string | number>(1);
+    const { baseCurrency, exchangeRates } = useCurrencyController();
+    const [amount, setAmount] = useState<string>('1');  // Use string type to handle empty values
     const [searchQuery, setSearchQuery] = useState<string>('');
 
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAmount(e.target.value);
-    };
-
-    const handleAmountBlur = () => {
-        if (amount === '' || amount === 0) {
-            setAmount(1);
-        }
+        setAmount(e.target.value);  // Allow the input to handle empty strings
     };
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
     };
 
+    // Parse the amount to number, default to 1 if it's empty or invalid
+    const baseAmount = parseFloat(amount) || 1;
+
     const filteredRates = exchangeRates?.rates
         ? Object.keys(exchangeRates.rates)
             .filter((currency) => currency.toLowerCase().includes(searchQuery.toLowerCase()))
             .reduce((obj, key) => {
-                obj[key] = exchangeRates.rates[key];
+                obj[key] = exchangeRates.rates[key] * baseAmount;  // Adjusted rate based on baseAmount
                 return obj;
             }, {} as { [key: string]: number })
         : {};
 
     return (
         <div className="exchange-rate-view">
-            <h2>Currency Converter</h2>
-            <p>Base Currency: <strong>{baseCurrency} (Fixed for Free Plan)</strong></p>
+            <h1 className="title">CURRENCY EXCHANGE</h1>
+            <p className="base-currency-info">Base Currency: {baseCurrency}</p>
 
-            {/* Input Field for the Amount */}
             <div className="input-section">
-                <label htmlFor="amount">Amount in {baseCurrency}:</label>
+                <label>Base in EUR</label>
                 <input
-                    type="text"
-                    id="amount"
+                    type="number"
                     value={amount}
                     onChange={handleAmountChange}
-                    onBlur={handleAmountBlur}
                     className="amount-input"
+                    placeholder="Enter amount in EUR"
                 />
             </div>
 
-            {/* Search Field for Filtering Currencies */}
-            <div className="search-section">
-                <label htmlFor="search">Search Currency:</label>
+            <div className="input-section">
+                <label>Search Currency</label>
                 <input
                     type="text"
-                    id="search"
                     value={searchQuery}
                     onChange={handleSearchChange}
-                    placeholder="Type currency code (e.g., USD)"
                     className="search-input"
+                    placeholder="Type currency code (e.g., USD)"
                 />
             </div>
 
-            {/* Loading Indicator */}
-            {loading && <LoadingIndicator />}  {/* Display loading indicator when loading */}
+            <div className="rates-container">
+                {Object.keys(filteredRates).map((currency) => (
+                    <CurrencyCard key={currency} currency={currency} rate={filteredRates[currency]} />
+                ))}
+            </div>
 
-            {/* Error Message */}
-            {error && <ErrorMessage message={error} />}
-
-            {/* Display Exchange Rates */}
-            {exchangeRates && Object.keys(filteredRates).length > 0 ? (
-                <div className="rates-container">
-                    {Object.keys(filteredRates).map((currency) => (
-                        <div key={currency} className="rate-card">
-                            <h3>{currency}</h3>
-                            <p>{(parseFloat(amount as string) * filteredRates[currency]).toFixed(4)}</p>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                !loading && <p>No exchange rate data available for the selected filters.</p>  // Avoid showing message during loading
-            )}
+            <Link to="/weather">
+                <button className="weather-info-button">Weather Information</button>
+            </Link>
         </div>
     );
 };

@@ -1,5 +1,5 @@
-.exchange-rate-view {
-    max-width: 1200px;
+.weather-view {
+    max-width: 800px;
     margin: 50px auto;
     padding: 40px;
     text-align: center;
@@ -14,12 +14,6 @@
     margin-bottom: 20px;
 }
 
-.base-currency-info {
-    font-size: 18px;
-    color: #666666;
-    margin-bottom: 20px;
-}
-
 .input-section {
     display: flex;
     justify-content: center;
@@ -28,8 +22,7 @@
     margin: 20px 0;
 }
 
-.amount-input,
-.search-input {
+.input-section input {
     width: 500px;
     padding: 15px;
     border: 1px solid #dddddd;
@@ -38,20 +31,11 @@
     transition: all 0.3s ease;
 }
 
-.amount-input:focus,
-.search-input:focus {
+.input-section input:focus {
     border: 1px solid #2874f0;
 }
 
-.rates-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    padding: 20px;
-}
-
-.weather-info-button {
+.fetch-button {
     background-color: #2874f0;
     color: #ffffff;
     border: none;
@@ -62,22 +46,33 @@
     transition: background-color 0.3s ease;
 }
 
-.weather-info-button:hover {
+.fetch-button:hover {
     background-color: #1c5bbf;
 }
 
-@media (max-width: 768px) {
-    .amount-input,
-    .search-input {
-        width: 100%;
-    }
+.weather-card {
+    background: #ffffff;
+    margin-top: 30px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    display: block;  /* Changed to block to force full width and vertical stacking */
+    width: 500px;
+}
 
-    .weather-info-button {
-        width: 100%;
-    }
+.weather-card h2 {
+    color: #333333;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
 
-    .rates-container {
-        flex-direction: column;
-        align-items: center;
-    }
+.weather-card p {
+    font-size: 18px;
+    margin: 5px 0;
+}
+
+.error {
+    color: red;
+    margin-top: 20px;
 }
